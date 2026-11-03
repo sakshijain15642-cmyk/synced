@@ -1,1 +1,2 @@
 - Day 1: Chose FastAPI because it's async-friendly (needed for WebSockets later) and generates API docs automatically.
+- Day 2: Used Docker Compose so the API and Postgres run identically on any machine. Containers talk by service name (db), not localhost.

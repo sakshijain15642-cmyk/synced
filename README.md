@@ -9,7 +9,8 @@ Work in progress.
 FastAPI, PostgreSQL, Redis, React + TypeScript, Yjs
 
 ## Run locally
-cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+Requires Docker Desktop.
+
+    docker compose up --build
+
+API: http://127.0.0.1:8000/docs
