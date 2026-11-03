@@ -1,0 +1,1 @@
+- Day 1: Chose FastAPI because it's async-friendly (needed for WebSockets later) and generates API docs automatically.
