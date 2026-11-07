@@ -1,2 +1,3 @@
 - Day 1: Chose FastAPI because it's async-friendly (needed for WebSockets later) and generates API docs automatically.
 - Day 2: Used Docker Compose so the API and Postgres run identically on any machine. Containers talk by service name (db), not localhost.
+- Day 3: Used SQLAlchemy 2.0 ORM + Alembic migrations instead of hand-written SQL, so schema changes are versioned and reproducible. Team membership is a separate table (many-to-many). Roles will be added in Week 6 via a migration.
