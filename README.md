@@ -21,4 +21,13 @@ Requires Docker running (for Postgres) and a `synced_test` database:
     cd backend
     pytest -v
 
+## Run the frontend
+Requires Node.js 20+.
+
+    cd frontend
+    npm install
+    npm run dev
+
+App: http://localhost:5173
+
 API: http://127.0.0.1:8000/docs
