@@ -3,7 +3,10 @@ import os
 import psycopg
 from fastapi import FastAPI
 
+from app.routers import auth
+
 app = FastAPI(title="Synced API")
+app.include_router(auth.router)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
