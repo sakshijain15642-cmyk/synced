@@ -3,10 +3,12 @@ import os
 import psycopg
 from fastapi import FastAPI
 
-from app.routers import auth
+from app.routers import auth, incidents, teams
 
 app = FastAPI(title="Synced API")
 app.include_router(auth.router)
+app.include_router(teams.router)
+app.include_router(incidents.router)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
