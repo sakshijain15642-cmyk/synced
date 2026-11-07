@@ -55,3 +55,9 @@ class IncidentOut(BaseModel):
     severity: str
     created_at: datetime
     updated_at: datetime
+
+class IncidentUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
+    status: Status | None = None
+    severity: Severity | None = None
