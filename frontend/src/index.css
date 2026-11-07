@@ -13,3 +13,53 @@ main {
   margin: 2rem auto;
   padding: 0 1rem;
 }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.field input {
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  border: 1px solid #888;
+  border-radius: 6px;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: #d33;
+}
+
+.field-error {
+  margin: 0;
+  color: #d33;
+  font-size: 0.875rem;
+}
+
+button.primary {
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  font-weight: 600;
+  color: white;
+  background: #2f6fed;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.notice {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: rgba(47, 111, 237, 0.15);
+}
