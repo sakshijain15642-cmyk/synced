@@ -22,3 +22,10 @@ export function validateFullName(name: string): string | null {
   if (trimmed.length > 100) return "Name must be at most 100 characters.";
   return null;
 }
+
+export function validateTeamName(name: string): string | null {
+  const trimmed = name.trim();
+  if (!trimmed) return "Team name is required.";
+  if (trimmed.length > 100) return "Team name must be at most 100 characters.";
+  return null;
+}

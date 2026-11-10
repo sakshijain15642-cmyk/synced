@@ -1,6 +1,7 @@
 import { clearToken, getToken } from "./token";
 
 const API_URL: string = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
+export const UNAUTHORIZED_EVENT = "synced:unauthorized";
 
 export class ApiError extends Error {
   status: number;
@@ -65,7 +66,10 @@ export async function request<T>(
 
   if (!response.ok) {
     // A 401 while holding a token means it expired or is invalid: forget it.
-    if (response.status === 401 && token) clearToken();
+    if (response.status === 401 && token) {
+      clearToken();
+      window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+    }
     throw new ApiError(
       response.status,
       errorMessage(data, `Request failed (${response.status})`),

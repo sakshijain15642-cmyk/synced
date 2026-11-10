@@ -1,12 +1,18 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { login } from "../api/auth";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { ApiError } from "../api/client";
+import { useAuth } from "../auth/context";
 import TextField from "../components/TextField";
 import { validateEmail } from "../utils/validation";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
+  const { status, signIn } = useAuth();
+  const location = useLocation();
+  // If a protected page sent us here, go back to it after login.
+  const from =
+    (location.state as { from?: { pathname: string } } | null)?.from
+      ?.pathname ?? "/teams";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -27,8 +33,7 @@ export default function LoginPage() {
 
     setSubmitting(true);
     try {
-      await login(email.trim(), password);
-      navigate("/teams");
+      await signIn(email.trim(), password);
     } catch (error) {
       setServerError(
         error instanceof ApiError
@@ -38,6 +43,10 @@ export default function LoginPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (status === "authenticated") {
+    return <Navigate to={from} replace />;
   }
 
   return (
