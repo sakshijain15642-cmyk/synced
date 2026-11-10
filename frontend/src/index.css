@@ -63,3 +63,10 @@ button.primary:disabled {
   border-radius: 6px;
   background: rgba(47, 111, 237, 0.15);
 }
+
+.form-error {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  color: #d33;
+  background: rgba(221, 51, 51, 0.12);
+}

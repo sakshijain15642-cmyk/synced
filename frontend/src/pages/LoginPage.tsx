@@ -1,30 +1,43 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../api/auth";
+import { ApiError } from "../api/client";
 import TextField from "../components/TextField";
 import { validateEmail } from "../utils/validation";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  // Errors are computed from the current values, not stored in state.
   const errors = {
     email: validateEmail(email),
     password: password ? null : "Password is required.",
   };
   const hasErrors = Object.values(errors).some(Boolean);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); // stop the browser from reloading the page
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setSubmitted(true);
-    if (hasErrors) {
-      setNotice(null);
-      return;
+    setServerError(null);
+    if (hasErrors) return;
+
+    setSubmitting(true);
+    try {
+      await login(email.trim(), password);
+      navigate("/teams");
+    } catch (error) {
+      setServerError(
+        error instanceof ApiError
+          ? error.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
     }
-    // Day 10 replaces this with a real API call.
-    setNotice("Form is valid. Connecting to the API comes on Day 10.");
   }
 
   return (
@@ -47,15 +60,15 @@ export default function LoginPage() {
           onChange={setPassword}
           error={submitted ? errors.password : null}
         />
-        <button type="submit" className="primary">
-          Log in
+        {serverError && (
+          <p className="form-error" role="alert">
+            {serverError}
+          </p>
+        )}
+        <button type="submit" className="primary" disabled={submitting}>
+          {submitting ? "Logging in..." : "Log in"}
         </button>
       </form>
-      {notice && (
-        <p className="notice" role="status">
-          {notice}
-        </p>
-      )}
       <p>
         Need an account? <Link to="/signup">Sign up</Link>
       </p>
