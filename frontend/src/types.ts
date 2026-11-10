@@ -1,10 +1,17 @@
-export type IncidentStatus =
-  | "open"
-  | "investigating"
-  | "mitigated"
-  | "resolved";
+export const INCIDENT_STATUSES = [
+  "open",
+  "investigating",
+  "mitigated",
+  "resolved",
+] as const;
+export type IncidentStatus = (typeof INCIDENT_STATUSES)[number];
 
-export type Severity = "low" | "medium" | "high" | "critical";
+export const SEVERITIES = ["low", "medium", "high", "critical"] as const;
+export type Severity = (typeof SEVERITIES)[number];
+
+export function isIncidentStatus(value: string | null): value is IncidentStatus {
+  return INCIDENT_STATUSES.some((status) => status === value);
+}
 
 export interface User {
   id: number;
