@@ -4,8 +4,19 @@ import psycopg
 from fastapi import FastAPI
 
 from app.routers import auth, incidents, teams
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Synced API")
+cors_origins = os.getenv(
+    "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+).split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(auth.router)
 app.include_router(teams.router)
 app.include_router(incidents.router)
