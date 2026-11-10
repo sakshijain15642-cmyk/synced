@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { login, signup } from "../api/auth";
+import { Link, Navigate } from "react-router-dom";
 import { ApiError } from "../api/client";
+import { useAuth } from "../auth/context";
 import TextField from "../components/TextField";
 import {
   validateEmail,
@@ -10,7 +10,7 @@ import {
 } from "../utils/validation";
 
 export default function SignupPage() {
-  const navigate = useNavigate();
+  const { status, signUp } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,13 +36,11 @@ export default function SignupPage() {
 
     setSubmitting(true);
     try {
-      await signup({
+      await signUp({
         email: email.trim(),
         full_name: fullName.trim(),
         password,
       });
-      await login(email.trim(), password); // log them straight in
-      navigate("/teams");
     } catch (error) {
       setServerError(
         error instanceof ApiError
@@ -52,6 +50,10 @@ export default function SignupPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (status === "authenticated") {
+    return <Navigate to="/teams" replace />;
   }
 
   return (

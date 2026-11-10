@@ -1,56 +1,104 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../api/auth";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { ApiError } from "../api/client";
-import { clearToken } from "../api/token";
-import type { User } from "../types";
+import { createTeam, listTeams } from "../api/teams";
+import TextField from "../components/TextField";
+import type { Team } from "../types";
+import { validateTeamName } from "../utils/validation";
 
 export default function TeamsPage() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // null means "not loaded yet".
+  const [teams, setTeams] = useState<Team[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false; // ignore results that arrive after we've left the page
+    let cancelled = false;
 
-    getCurrentUser()
-      .then((currentUser) => {
-        if (!cancelled) setUser(currentUser);
+    listTeams()
+      .then((result) => {
+        if (!cancelled) setTeams(result);
       })
-      .catch((err) => {
-        if (cancelled) return;
-        if (err instanceof ApiError && err.status === 401) {
-          navigate("/login");
-        } else {
-          setError(err instanceof ApiError ? err.message : "Something went wrong.");
+      .catch((error) => {
+        if (!cancelled) {
+          setLoadError(
+            error instanceof ApiError ? error.message : "Could not load teams.",
+          );
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [navigate]);
+  }, []);
 
-  function handleLogout() {
-    clearToken();
-    navigate("/login");
+  const nameError = validateTeamName(name);
+
+  async function handleCreate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitted(true);
+    setCreateError(null);
+    if (nameError) return;
+
+    setCreating(true);
+    try {
+      const team = await createTeam(name.trim());
+      setTeams((current) => [...(current ?? []), team]); // no refetch needed
+      setName("");
+      setSubmitted(false);
+    } catch (error) {
+      setCreateError(
+        error instanceof ApiError ? error.message : "Could not create the team.",
+      );
+    } finally {
+      setCreating(false);
+    }
   }
 
   return (
     <main>
       <h1>Your teams</h1>
-      {error && <p className="form-error">{error}</p>}
-      {user && (
-        <p>
-          Logged in as <strong>{user.full_name}</strong> ({user.email})
+
+      {loadError && (
+        <p className="form-error" role="alert">
+          {loadError}
         </p>
       )}
-      <p>Team list coming on Day 11.</p>
-      <Link to="/teams/1">Open team 1 (demo link)</Link>
-      <br />
-      <button type="button" onClick={handleLogout}>
-        Log out
-      </button>
+      {teams === null && !loadError && <p>Loading teams...</p>}
+      {teams !== null && teams.length === 0 && (
+        <p>You are not in any team yet. Create one below.</p>
+      )}
+      {teams !== null && teams.length > 0 && (
+        <ul className="team-list">
+          {teams.map((team) => (
+            <li key={team.id}>
+              <Link to={`/teams/${team.id}`}>{team.name}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h2>Create a team</h2>
+      <form onSubmit={handleCreate} noValidate>
+        <TextField
+          label="Team name"
+          value={name}
+          onChange={setName}
+          error={submitted ? nameError : null}
+        />
+        {createError && (
+          <p className="form-error" role="alert">
+            {createError}
+          </p>
+        )}
+        <button type="submit" className="primary" disabled={creating}>
+          {creating ? "Creating..." : "Create team"}
+        </button>
+      </form>
     </main>
   );
 }
