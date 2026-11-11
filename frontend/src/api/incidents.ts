@@ -20,3 +20,10 @@ export function listIncidents(
   const suffix = queryString ? `?${queryString}` : "";
   return request<Incident[]>(`/teams/${teamId}/incidents${suffix}`);
 }
+
+export function getIncident(
+  teamId: number,
+  incidentId: number,
+): Promise<Incident> {
+  return request<Incident>(`/teams/${teamId}/incidents/${incidentId}`);
+}
