@@ -12,3 +12,8 @@ export function timeAgo(iso: string, now: Date = new Date()): string {
   if (hours < 24) return `${hours} h ago`;
   return `${Math.floor(hours / 24)} d ago`;
 }
+
+// Shows a UTC timestamp from the API in the viewer's local time and format.
+export function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString();
+}
