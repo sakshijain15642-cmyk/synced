@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../api/client";
-import { getIncident } from "../api/incidents";
 import Badge from "../components/Badge";
-import type { Incident } from "../types";
+import SelectField from "../components/SelectField";
 import { formatDateTime, timeAgo } from "../utils/format";
+import {
+  getIncident,
+  updateIncident,
+  type UpdateIncidentInput,
+} from "../api/incidents";
+import { INCIDENT_STATUSES, SEVERITIES, type Incident } from "../types";
 
 interface Loaded {
   requestKey: string;
@@ -28,7 +33,9 @@ export default function IncidentDetailPage() {
   const [attempt, setAttempt] = useState(0); // bump to retry after an error
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState<Failed | null>(null);
-
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   // Only results for THIS key count; anything else is stale and ignored.
   const requestKey = `${teamNumber}|${incidentNumber}|${attempt}`;
   const incident = loaded?.requestKey === requestKey ? loaded.incident : null;
@@ -67,6 +74,28 @@ export default function IncidentDetailPage() {
       document.title = "Synced";
     };
   }, [incident]);
+
+    async function handleChange(changes: UpdateIncidentInput) {
+    setSaving(true);
+    setSaved(false);
+    setSaveError(null);
+    try {
+      const updated = await updateIncident(teamNumber, incidentNumber, changes);
+      // The server sends back the whole incident: use it as the new truth.
+      setLoaded((previous) =>
+        previous && previous.requestKey === requestKey
+          ? { ...previous, incident: updated }
+          : previous,
+      );
+      setSaved(true);
+    } catch (err) {
+      setSaveError(
+        err instanceof ApiError ? err.message : "Could not save the change.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
   if (!validIds || failure?.status === 404) {
     return (
@@ -139,8 +168,38 @@ export default function IncidentDetailPage() {
             <p className="muted">No description provided.</p>
           )}
 
-          <h2>Actions</h2>
-          <p className="muted">Changing the status comes on Day 14.</p>
+          <h2>Update</h2>
+          <div className="update-controls">
+            <SelectField
+              label="Status"
+              value={incident.status}
+              options={INCIDENT_STATUSES}
+              disabled={saving}
+              onChange={(status) => handleChange({ status })}
+            />
+            <SelectField
+              label="Severity"
+              value={incident.severity}
+              options={SEVERITIES}
+              disabled={saving}
+              onChange={(severity) => handleChange({ severity })}
+            />
+          </div>
+          {saving && (
+            <p role="status" className="muted">
+              Saving...
+            </p>
+          )}
+          {saved && !saving && (
+            <p role="status" className="muted">
+              Saved.
+            </p>
+          )}
+          {saveError && (
+            <p className="form-error" role="alert">
+              {saveError}
+            </p>
+          )}
         </article>
       )}
     </main>

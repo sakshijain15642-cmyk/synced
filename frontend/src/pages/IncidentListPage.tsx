@@ -123,7 +123,13 @@ export default function IncidentListPage() {
       <p>
         <Link to="/teams">&larr; Back to teams</Link>
       </p>
-      <h1>Incidents</h1>
+
+      <div className="page-header">
+        <h1>Incidents</h1>
+        <Link to={`/teams/${id}/incidents/new`} className="button-link">
+          New incident
+        </Link>
+      </div>
 
       <div className="toolbar">
         <label htmlFor="status-filter">Status</label>
@@ -158,7 +164,7 @@ export default function IncidentListPage() {
         <p>
           {status
             ? `No ${status} incidents.`
-            : "No incidents yet. Creating them comes on Day 14."}
+            : "No incidents yet. Create the first one with the button above."}
         </p>
       )}
 

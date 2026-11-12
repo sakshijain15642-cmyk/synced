@@ -29,3 +29,17 @@ export function validateTeamName(name: string): string | null {
   if (trimmed.length > 100) return "Team name must be at most 100 characters.";
   return null;
 }
+
+export function validateIncidentTitle(title: string): string | null {
+  const trimmed = title.trim();
+  if (!trimmed) return "Title is required.";
+  if (trimmed.length > 200) return "Title must be at most 200 characters.";
+  return null;
+}
+
+export function validateIncidentDescription(description: string): string | null {
+  if (description.trim().length > 5000) {
+    return "Description must be at most 5000 characters.";
+  }
+  return null;
+}
