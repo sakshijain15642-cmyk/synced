@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SignupPage from "./pages/SignupPage";
 import TeamsPage from "./pages/TeamsPage";
+import NewIncidentPage from "./pages/NewIncidentPage";
 
 export default function App() {
   return (
@@ -20,6 +21,10 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/teams" element={<TeamsPage />} />
           <Route path="/teams/:teamId" element={<IncidentListPage />} />
+          <Route
+            path="/teams/:teamId/incidents/new"
+            element={<NewIncidentPage />}
+          />
           <Route
             path="/teams/:teamId/incidents/:incidentId"
             element={<IncidentDetailPage />}
