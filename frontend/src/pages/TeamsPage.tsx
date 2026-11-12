@@ -5,9 +5,13 @@ import { createTeam, listTeams } from "../api/teams";
 import TextField from "../components/TextField";
 import type { Team } from "../types";
 import { validateTeamName } from "../utils/validation";
+import ErrorBanner from "../components/ErrorBanner";
+import Loading from "../components/Loading";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export default function TeamsPage() {
   // null means "not loaded yet".
+  usePageTitle("Teams");
   const [teams, setTeams] = useState<Team[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -63,12 +67,8 @@ export default function TeamsPage() {
     <main>
       <h1>Your teams</h1>
 
-      {loadError && (
-        <p className="form-error" role="alert">
-          {loadError}
-        </p>
-      )}
-      {teams === null && !loadError && <p>Loading teams...</p>}
+      {loadError && <ErrorBanner message={loadError} />}
+      {teams === null && !loadError && <Loading label="Loading teams..." />}
       {teams !== null && teams.length === 0 && (
         <p>You are not in any team yet. Create one below.</p>
       )}

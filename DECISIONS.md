@@ -12,3 +12,12 @@
 - Day 12: Incident filter lives in the URL (?status=) so refresh/share keep it; invalid values fall back to "All". Fetch results are stored with a request key (team+filter+retry) and loading/error are derived from "no result for the current key", which avoids stale-state bugs. Pagination is "load more" using the API's limit/offset; appended pages are de-duplicated by id because offset paging can repeat rows when new incidents arrive (cursor/keyset paging is the proper fix if it ever matters). Badges show text, not only color.
 - Day 13: Detail page reuses the keyed-result fetch pattern from Day 12. A 404 (missing, wrong team, or not a member) renders one generic "not found" page so nothing leaks about what exists; other errors stay in-page with retry. User text is rendered as plain React text (escaped) with pre-wrap for line breaks, never as HTML, because the JWT in localStorage would be exposed to injected script. "Opened by" shows a user id until the API returns names.
 - Day 14: Mutations wait for the server and then replace local state with the full incident the API returns, so the UI never shows an unsaved value and stale tabs self-correct on their next save. Controls are disabled while saving to prevent racing requests. PATCH sends only the changed field. New incident navigates with replace so Back goes to the list. SelectField is generic so status and severity dropdowns are type-checked separately. Concurrent edits are last-write-wins until live sync in Week 3.
+- Day 15: Extracted Loading/ErrorBanner and a usePageTitle hook after the same markup appeared in three pages. Added an ErrorBoundary so a render crash shows a recovery screen instead of a blank page. CI now also lints and builds the frontend on Linux (catches case-sensitive import mistakes Windows hides). Ran a Lighthouse accessibility audit and fixed contrast/focus issues.
+
+## Known limitations (honest list, to revisit)
+- No way to add other people to a team yet (a team has only its creator). Needed for real-time collaboration.
+- "Opened by" shows a user id, not a name.
+- List pagination uses offset/limit, which can repeat or skip rows if incidents are added while paging.
+- JWT is in localStorage (readable by injected script); httpOnly cookies would be stronger.
+- No role checks yet: any team member can edit any incident (roles arrive in Week 6).
+- Concurrent edits are last-write-wins until real-time sync lands.

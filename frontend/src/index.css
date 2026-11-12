@@ -222,3 +222,73 @@ button.primary:disabled {
 .muted {
   opacity: 0.7;
 }
+
+.form-error > p {
+  margin: 0;
+}
+
+.form-error button {
+  margin-top: 0.5rem;
+}
+
+/* Keyboard users need to see where focus is. */
+:focus-visible {
+  outline: 3px solid #2f6fed;
+  outline-offset: 2px;
+}
+
+/* Phones: stack things that sit side by side on a desktop. */
+@media (max-width: 600px) {
+  .app-header {
+    padding: 0.5rem 1rem;
+  }
+
+  main {
+    margin: 1rem auto;
+  }
+
+  .incident-row,
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Fingers need bigger targets than mouse pointers. */
+@media (pointer: coarse) {
+  button,
+  select,
+  input,
+  textarea,
+  .button-link {
+    min-height: 44px;
+  }
+}
+
+/* Darker badge text on light backgrounds for better contrast. */
+@media (prefers-color-scheme: light) {
+  .badge-severity-low {
+    color: #4b535c;
+  }
+  .badge-severity-medium {
+    color: #7d5a00;
+  }
+  .badge-severity-high {
+    color: #9a4f00;
+  }
+  .badge-severity-critical {
+    color: #b01f1f;
+  }
+  .badge-status-open {
+    color: #1c4fb8;
+  }
+  .badge-status-investigating {
+    color: #9a4f00;
+  }
+  .badge-status-mitigated {
+    color: #6a3fc0;
+  }
+  .badge-status-resolved {
+    color: #1a7a2e;
+  }
+}

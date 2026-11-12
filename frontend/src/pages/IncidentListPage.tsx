@@ -5,6 +5,9 @@ import { listIncidents } from "../api/incidents";
 import Badge from "../components/Badge";
 import { INCIDENT_STATUSES, isIncidentStatus, type Incident } from "../types";
 import { capitalize, timeAgo } from "../utils/format";
+import ErrorBanner from "../components/ErrorBanner";
+import Loading from "../components/Loading";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const PAGE_SIZE = 10;
 
@@ -20,6 +23,7 @@ interface Failed {
 }
 
 export default function IncidentListPage() {
+  usePageTitle("Incidents");
   const { teamId } = useParams();
   const id = Number(teamId);
   const validTeam = Number.isInteger(id);
@@ -147,17 +151,13 @@ export default function IncidentListPage() {
         </select>
       </div>
 
-      {isLoading && <p>Loading incidents...</p>}
+      {isLoading && <Loading label="Loading incidents..." />}
 
       {error && (
-        <>
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-          <button type="button" onClick={() => setAttempt((n) => n + 1)}>
-            Try again
-          </button>
-        </>
+        <ErrorBanner
+          message={error}
+          onRetry={() => setAttempt((n) => n + 1)}
+        />
       )}
 
       {current && current.incidents.length === 0 && (
@@ -195,11 +195,7 @@ export default function IncidentListPage() {
             ))}
           </ul>
 
-          {moreError && (
-            <p className="form-error" role="alert">
-              {moreError}
-            </p>
-          )}
+          {moreError && <ErrorBanner message={moreError} />}
           {current.hasMore && (
             <button type="button" onClick={loadMore} disabled={loadingMore}>
               {loadingMore ? "Loading..." : "Load more"}

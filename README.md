@@ -3,7 +3,7 @@
 Real-time collaborative incident board for small teams.
 
 ## Status
-Work in progress.
+Week 2 complete: sign up and log in, teams, incident list with filters and pagination, incident detail, create and update incidents. Real-time features are next.
 
 ## Stack
 FastAPI, PostgreSQL, Redis, React + TypeScript, Yjs

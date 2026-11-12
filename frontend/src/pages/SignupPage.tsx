@@ -8,8 +8,10 @@ import {
   validateFullName,
   validateNewPassword,
 } from "../utils/validation";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export default function SignupPage() {
+  usePageTitle("Sign up");
   const { status, signUp } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
