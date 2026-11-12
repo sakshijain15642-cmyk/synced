@@ -10,6 +10,9 @@ import {
   type UpdateIncidentInput,
 } from "../api/incidents";
 import { INCIDENT_STATUSES, SEVERITIES, type Incident } from "../types";
+import ErrorBanner from "../components/ErrorBanner";
+import Loading from "../components/Loading";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 interface Loaded {
   requestKey: string;
@@ -67,13 +70,7 @@ export default function IncidentDetailPage() {
     };
   }, [teamNumber, incidentNumber, requestKey, validIds]);
 
-  // Put the incident title in the browser tab.
-  useEffect(() => {
-    document.title = incident ? `${incident.title} - Synced` : "Synced";
-    return () => {
-      document.title = "Synced";
-    };
-  }, [incident]);
+  usePageTitle(incident?.title ?? "Incident");
 
     async function handleChange(changes: UpdateIncidentInput) {
     setSaving(true);
@@ -115,17 +112,13 @@ export default function IncidentDetailPage() {
         <span>Incident #{incidentNumber}</span>
       </nav>
 
-      {isLoading && <p>Loading incident...</p>}
+      {isLoading && <Loading label="Loading incident..." />}
 
       {failure && (
-        <>
-          <p className="form-error" role="alert">
-            {failure.message}
-          </p>
-          <button type="button" onClick={() => setAttempt((n) => n + 1)}>
-            Try again
-          </button>
-        </>
+        <ErrorBanner
+          message={failure.message}
+          onRetry={() => setAttempt((n) => n + 1)}
+        />
       )}
 
       {incident && (

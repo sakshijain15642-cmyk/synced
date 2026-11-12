@@ -1,3 +1,5 @@
+import { usePageTitle } from "../hooks/usePageTitle"
+
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { ApiError } from "../api/client";
@@ -6,6 +8,7 @@ import TextField from "../components/TextField";
 import { validateEmail } from "../utils/validation";
 
 export default function LoginPage() {
+  usePageTitle("Log in");
   const { status, signIn } = useAuth();
   const location = useLocation();
   // If a protected page sent us here, go back to it after login.

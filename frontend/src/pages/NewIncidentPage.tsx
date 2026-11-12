@@ -10,8 +10,10 @@ import {
   validateIncidentDescription,
   validateIncidentTitle,
 } from "../utils/validation";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export default function NewIncidentPage() {
+  usePageTitle("New incident");
   const { teamId } = useParams();
   const teamNumber = Number(teamId);
   const navigate = useNavigate();
